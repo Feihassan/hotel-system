@@ -136,14 +136,16 @@ const LoginPage = () => {
 };
 
 // Sidebar Component
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const { user, logout, hasRole, hasPermission } = useAuth();
   const location = useLocation();
-  
   const isActive = (path) => location.pathname === path;
-  
+  const handleNav = () => { if (window.innerWidth <= 768) onClose(); };
+
   return (
-    <aside className="sidebar">
+    <>
+      {isOpen && <div className="sidebar-overlay open" onClick={onClose} />}
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
         <div className="sidebar-logo">
           <Icons.Bed />
@@ -156,27 +158,23 @@ const Sidebar = () => {
           <div className="nav-section">
             <div className="nav-section-title">Main</div>
             {hasPermission('dashboard') && (
-              <Link to="/" className={`nav-item ${isActive('/') ? 'active' : ''}`}>
-                <Icons.Home />
-                <span>Dashboard</span>
+              <Link to="/" onClick={handleNav} className={`nav-item ${isActive('/') ? 'active' : ''}`}>
+                <Icons.Home /><span>Dashboard</span>
               </Link>
             )}
             {hasPermission('rooms') && (
-              <Link to="/rooms" className={`nav-item ${isActive('/rooms') ? 'active' : ''}`}>
-                <Icons.Grid />
-                <span>Rooms</span>
+              <Link to="/rooms" onClick={handleNav} className={`nav-item ${isActive('/rooms') ? 'active' : ''}`}>
+                <Icons.Grid /><span>Rooms</span>
               </Link>
             )}
             {hasPermission('checkin') && (
-              <Link to="/checkin" className={`nav-item ${isActive('/checkin') ? 'active' : ''}`}>
-                <Icons.UserCheck />
-                <span>Walk-In Check-In</span>
+              <Link to="/checkin" onClick={handleNav} className={`nav-item ${isActive('/checkin') ? 'active' : ''}`}>
+                <Icons.UserCheck /><span>Walk-In Check-In</span>
               </Link>
             )}
             {hasPermission('stays') && (
-              <Link to="/stays" className={`nav-item ${isActive('/stays') ? 'active' : ''}`}>
-                <Icons.Users />
-                <span>Active Stays</span>
+              <Link to="/stays" onClick={handleNav} className={`nav-item ${isActive('/stays') ? 'active' : ''}`}>
+                <Icons.Users /><span>Active Stays</span>
               </Link>
             )}
           </div>
@@ -186,15 +184,13 @@ const Sidebar = () => {
           <div className="nav-section">
             <div className="nav-section-title">Management</div>
             {hasPermission('guests') && (
-              <Link to="/guests" className={`nav-item ${isActive('/guests') ? 'active' : ''}`}>
-                <Icons.Users />
-                <span>Guests</span>
+              <Link to="/guests" onClick={handleNav} className={`nav-item ${isActive('/guests') ? 'active' : ''}`}>
+                <Icons.Users /><span>Guests</span>
               </Link>
             )}
             {hasPermission('housekeeping') && (
-              <Link to="/housekeeping" className={`nav-item ${isActive('/housekeeping') ? 'active' : ''}`}>
-                <Icons.Clipboard />
-                <span>Housekeeping</span>
+              <Link to="/housekeeping" onClick={handleNav} className={`nav-item ${isActive('/housekeeping') ? 'active' : ''}`}>
+                <Icons.Clipboard /><span>Housekeeping</span>
               </Link>
             )}
           </div>
@@ -203,13 +199,11 @@ const Sidebar = () => {
         {hasPermission('reports') && (
           <div className="nav-section">
             <div className="nav-section-title">Reports</div>
-            <Link to="/reports" className={`nav-item ${isActive('/reports') ? 'active' : ''}`}>
-              <Icons.FileText />
-              <span>Reports</span>
+            <Link to="/reports" onClick={handleNav} className={`nav-item ${isActive('/reports') ? 'active' : ''}`}>
+              <Icons.FileText /><span>Reports</span>
             </Link>
-            <Link to="/shifts" className={`nav-item ${isActive('/shifts') ? 'active' : ''}`}>
-              <Icons.Clock />
-              <span>Shifts</span>
+            <Link to="/shifts" onClick={handleNav} className={`nav-item ${isActive('/shifts') ? 'active' : ''}`}>
+              <Icons.Clock /><span>Shifts</span>
             </Link>
           </div>
         )}
@@ -217,9 +211,8 @@ const Sidebar = () => {
         {hasRole('admin') && (
           <div className="nav-section">
             <div className="nav-section-title">Admin</div>
-            <Link to="/users" className={`nav-item ${isActive('/users') ? 'active' : ''}`}>
-              <Icons.Settings />
-              <span>User Management</span>
+            <Link to="/users" onClick={handleNav} className={`nav-item ${isActive('/users') ? 'active' : ''}`}>
+              <Icons.Settings /><span>User Management</span>
             </Link>
           </div>
         )}
@@ -232,11 +225,12 @@ const Sidebar = () => {
         </div>
       </nav>
     </aside>
+    </>
   );
 };
 
 // Header Component
-const Header = ({ title }) => {
+const Header = ({ title, onMenuClick }) => {
   const { user } = useAuth();
   const [currentShift, setCurrentShift] = useState(null);
   const [shiftLoading, setShiftLoading] = useState(false);
@@ -272,7 +266,12 @@ const Header = ({ title }) => {
 
   return (
     <header className="header">
-      <h1 className="header-title">{title}</h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <button className="mobile-menu-btn" onClick={onMenuClick}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1 className="header-title">{title}</h1>
+      </div>
       <div className="header-actions">
         {(user?.role === 'receptionist' || user?.role === 'admin') && (
           currentShift ? (
@@ -371,7 +370,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Room Status Row */}
-        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+        <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-icon blue"><Icons.Home /></div>
             <div className="stat-content">
@@ -420,7 +419,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Activity Row */}
-        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+        <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-icon green"><Icons.UserCheck /></div>
             <div className="stat-content">
@@ -452,7 +451,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Tables Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Today's Check-Ins</h3>
@@ -1989,10 +1988,13 @@ const ProtectedRoute = ({ children, requiredPermission }) => {
 
 // Layout Component
 const Layout = ({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <div className="app-container">
-      <Sidebar />
-      <main className="main-content">{children}</main>
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <main className="main-content">
+        {React.cloneElement(children, { onMenuClick: () => setSidebarOpen(true) })}
+      </main>
     </div>
   );
 };
