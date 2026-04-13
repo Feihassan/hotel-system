@@ -19,6 +19,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 const allowedOrigins = [
   'http://localhost:3000',
+  'https://marvelous-salmiakki-51066b.netlify.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -26,7 +27,7 @@ app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
-    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    if (origin.endsWith('.netlify.app')) return callback(null, true);
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
