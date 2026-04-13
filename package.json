@@ -2,6 +2,6 @@
   "name": "hotel-system",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build"
+    "build": "npm install --prefix frontend && npm run build --prefix frontend"
   }
 }
