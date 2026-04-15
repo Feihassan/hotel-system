@@ -63,11 +63,9 @@ router.post('/', receptionistOrAdmin, async (req, res) => {
     const alreadyPaid = parseFloat(booking.paid_amount || 0);
     const paymentAmount = parseFloat(amount);
     
-    // Determine payment status
-    let payment_status = 'completed';
-    if (payment_type === 'partial' || paymentAmount < (totalAmount - alreadyPaid)) {
-      payment_status = 'pending';
-    }
+    // All payments are completed — payment_type tracks partial vs full
+    const payment_status = 'completed';
+    const effective_type = payment_type || (paymentAmount >= (totalAmount - alreadyPaid) ? 'full' : 'partial');
     
     // Create payment
     const receiptNumber = generateReceiptNumber();
@@ -79,7 +77,7 @@ router.post('/', receptionistOrAdmin, async (req, res) => {
       booking_id,
       paymentAmount,
       payment_method,
-      payment_type || 'full',
+      effective_type,
       payment_status,
       reference_number || receiptNumber,
       notes || null,
@@ -141,10 +139,10 @@ router.post('/extra-charge', receptionistOrAdmin, async (req, res) => {
     
     // Create extra charge
     const stmt = db.prepare(
-      `INSERT INTO extra_charges (booking_id, description, amount, charge_type, notes, created_by, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
+      `INSERT INTO extra_charges (booking_id, description, amount, charge_type, created_by, created_at)
+       VALUES (?, ?, ?, ?, ?, datetime('now'))`
     );
-    const result = stmt.run([booking_id, description, amount, charge_type || 'misc', notes || null, req.user.id]);
+    const result = stmt.run([booking_id, description, amount, charge_type || 'misc', req.user.id]);
     
     const newChargeStmt = db.prepare('SELECT * FROM extra_charges WHERE id = ?');
     const newCharge = newChargeStmt.getAsObject([result.lastInsertRowid]);

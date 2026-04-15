@@ -1075,16 +1075,14 @@ const ActiveStaysPage = () => {
   const handlePayment = async (e) => {
     e.preventDefault();
     try {
-      // First process payment if there's balance
       if (parseFloat(paymentData.amount) > 0) {
         await paymentsAPI.process({
           booking_id: selectedStay.id,
           amount: paymentData.amount,
           payment_method: paymentData.payment_method,
-          payment_type: parseFloat(paymentData.amount) >= parseFloat(selectedStay.total_amount) - parseFloat(selectedStay.paid_amount || 0) ? 'full' : 'partial',
+          payment_type: 'full',
         });
       }
-      // Then checkout
       await bookingsAPI.checkOut(selectedStay.id);
       alert('Checkout successful!');
       setShowCheckoutModal(false);
