@@ -317,17 +317,21 @@ const DashboardPage = () => {
     setError(null);
     try {
       const today = new Date().toISOString().split('T')[0];
-      const [dashboardRes, todayRes, dailyRes] = await Promise.all([
+      const [dashboardRes, todayRes, dailyRes] = await Promise.allSettled([
         reportsAPI.getDashboard(),
         bookingsAPI.getToday(),
         reportsAPI.getDaily(today),
       ]);
-      setStats(dashboardRes.data);
-      setTodayBookings(todayRes.data);
-      setRevenue(dailyRes.data?.payments?.total || 0);
+      if (dashboardRes.status === 'fulfilled') setStats(dashboardRes.value.data);
+      if (todayRes.status === 'fulfilled') setTodayBookings(todayRes.value.data);
+      if (dailyRes.status === 'fulfilled') setRevenue(dailyRes.value.data?.payments?.total || 0);
+      // Only show error if ALL requests failed
+      if ([dashboardRes, todayRes, dailyRes].every(r => r.status === 'rejected')) {
+        setError('Failed to load dashboard data. Check your connection.');
+      }
       setLastUpdated(new Date());
     } catch (err) {
-      setError('Failed to load dashboard data. Retrying...');
+      setError('Failed to load dashboard data. Check your connection.');
     } finally {
       setLoading(false);
       setRefreshing(false);
