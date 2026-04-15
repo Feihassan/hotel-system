@@ -1,5 +1,81 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#1a1a2e"/>
-  <path d="M256 128 L128 224 V384 H208 V288 H304 V384 H384 V224 Z" fill="#4f46e5" />
-  <circle cx="256" cy="176" r="24" fill="#ffffff" />
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="50%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="building" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#c7d2fe" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a5b4fc"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#1e1b4b" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern overlay -->
+  <rect width="512" height="512" rx="108" fill="url(#bg)" opacity="0.3"/>
+
+  <!-- Decorative circles -->
+  <circle cx="420" cy="90" r="120" fill="white" opacity="0.03"/>
+  <circle cx="80" cy="420" r="100" fill="white" opacity="0.03"/>
+
+  <!-- Hotel building group with shadow -->
+  <g filter="url(#shadow)">
+    <!-- Main building body -->
+    <rect x="148" y="230" width="216" height="190" rx="4" fill="url(#building)"/>
+
+    <!-- Roof / pediment -->
+    <polygon points="256,118 136,230 376,230" fill="url(#roof)"/>
+
+    <!-- Roof ridge cap -->
+    <rect x="236" y="112" width="40" height="16" rx="4" fill="#c7d2fe"/>
+
+    <!-- Flagpole -->
+    <rect x="253" y="72" width="6" height="44" rx="3" fill="#a5b4fc"/>
+    <!-- Flag -->
+    <polygon points="259,76 285,84 259,92" fill="#818cf8"/>
+
+    <!-- Door (centered) -->
+    <rect x="228" y="336" width="56" height="84" rx="6" fill="#4f46e5"/>
+    <rect x="234" y="342" width="20" height="36" rx="3" fill="#6366f1"/>
+    <rect x="258" y="342" width="20" height="36" rx="3" fill="#6366f1"/>
+    <!-- Door handle -->
+    <circle cx="252" cy="384" r="4" fill="#a5b4fc"/>
+    <circle cx="260" cy="384" r="4" fill="#a5b4fc"/>
+
+    <!-- Windows row 1 -->
+    <rect x="164" y="252" width="36" height="32" rx="4" fill="#6366f1"/>
+    <rect x="238" y="252" width="36" height="32" rx="4" fill="#6366f1"/>
+    <rect x="312" y="252" width="36" height="32" rx="4" fill="#6366f1"/>
+
+    <!-- Windows row 2 -->
+    <rect x="164" y="302" width="36" height="32" rx="4" fill="#6366f1"/>
+    <rect x="312" y="302" width="36" height="32" rx="4" fill="#6366f1"/>
+
+    <!-- Window shine -->
+    <rect x="168" y="256" width="10" height="8" rx="2" fill="white" opacity="0.4"/>
+    <rect x="242" y="256" width="10" height="8" rx="2" fill="white" opacity="0.4"/>
+    <rect x="316" y="256" width="10" height="8" rx="2" fill="white" opacity="0.4"/>
+    <rect x="168" y="306" width="10" height="8" rx="2" fill="white" opacity="0.4"/>
+    <rect x="316" y="306" width="10" height="8" rx="2" fill="white" opacity="0.4"/>
+
+    <!-- Ground / steps -->
+    <rect x="120" y="418" width="272" height="12" rx="4" fill="#c7d2fe" opacity="0.6"/>
+    <rect x="136" y="408" width="240" height="12" rx="3" fill="#c7d2fe" opacity="0.4"/>
+  </g>
+
+  <!-- Star accent top-right -->
+  <g transform="translate(378, 108)">
+    <polygon points="0,-18 4,-6 17,-6 7,2 11,14 0,7 -11,14 -7,2 -17,-6 -4,-6"
+      fill="#fbbf24" opacity="0.9"/>
+  </g>
 </svg>

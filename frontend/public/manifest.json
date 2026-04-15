@@ -1,21 +1,32 @@
 {
+  "name": "Hotel Management System",
   "short_name": "HotelManager",
-  "name": "Front Desk Hotel Management System",
+  "description": "Front Desk Hotel Management — check-in, rooms, payments & housekeeping",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#4f46e5",
+  "background_color": "#1e1b4b",
   "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
     {
       "src": "logo.svg",
       "type": "image/svg+xml",
       "sizes": "512x512",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "favicon.svg",
-      "type": "image/svg+xml",
-      "sizes": "192x192"
+      "purpose": "maskable"
     }
   ],
-  "start_url": "/",
-  "display": "standalone",
-  "theme_color": "#1a1a2e",
-  "background_color": "#1a1a2e"
+  "categories": ["business", "productivity"],
+  "screenshots": []
 }

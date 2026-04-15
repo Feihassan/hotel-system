@@ -1,11 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="12" fill="#4f46e5"/>
-  <path d="M32 12L16 22v24h32V22L32 12z" fill="#fff" opacity="0.9"/>
-  <rect x="20" y="30" width="6" height="8" fill="#4f46e5"/>
-  <rect x="29" y="30" width="6" height="8" fill="#4f46e5"/>
-  <rect x="38" y="30" width="6" height="8" fill="#4f46e5"/>
-  <rect x="20" y="40" width="6" height="6" fill="#4f46e5"/>
-  <rect x="29" y="40" width="6" height="6" fill="#4f46e5"/>
-  <rect x="38" y="40" width="6" height="6" fill="#4f46e5"/>
-  <rect x="26" y="46" width="12" height="6" rx="1" fill="#4f46e5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="bld" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#c7d2fe"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+
+  <!-- Building body -->
+  <rect x="14" y="30" width="36" height="26" rx="2" fill="url(#bld)"/>
+
+  <!-- Roof -->
+  <polygon points="32,12 10,30 54,30" fill="#a5b4fc"/>
+
+  <!-- Flagpole -->
+  <rect x="30.5" y="7" width="3" height="7" rx="1.5" fill="#c7d2fe"/>
+
+  <!-- Door -->
+  <rect x="25" y="42" width="14" height="14" rx="2" fill="#4f46e5"/>
+
+  <!-- Windows row 1 -->
+  <rect x="16" y="33" width="8" height="7" rx="1.5" fill="#6366f1"/>
+  <rect x="40" y="33" width="8" height="7" rx="1.5" fill="#6366f1"/>
+
+  <!-- Window shine -->
+  <rect x="17.5" y="34.5" width="3" height="2" rx="1" fill="white" opacity="0.5"/>
+  <rect x="41.5" y="34.5" width="3" height="2" rx="1" fill="white" opacity="0.5"/>
+
+  <!-- Star -->
+  <polygon points="52,10 53.2,13.6 57,13.6 54,15.8 55.1,19.4 52,17.2 48.9,19.4 50,15.8 47,13.6 50.8,13.6"
+    fill="#fbbf24" opacity="0.95"/>
 </svg>
