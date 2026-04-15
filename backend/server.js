@@ -102,6 +102,16 @@ const startServer = async () => {
         db.exec(`UPDATE users SET is_active = 1 WHERE is_active IS NULL`);
       } catch (e) { /* ignore */ }
 
+      // Add missing columns to bookings if needed
+      const bookingCols = ['checked_in_by', 'checked_out_by', 'actual_check_in_time', 'actual_check_out_time', 'notes'];
+      bookingCols.forEach(col => {
+        try { db.exec(`ALTER TABLE bookings ADD COLUMN ${col} ${col.includes('time') ? 'DATETIME' : col === 'notes' ? 'TEXT' : 'INTEGER'}`); } catch (e) { /* exists */ }
+      });
+
+      // Add missing columns to payments if needed
+      try { db.exec(`ALTER TABLE payments ADD COLUMN reference_number TEXT`); } catch (e) { /* exists */ }
+      try { db.exec(`ALTER TABLE payments ADD COLUMN notes TEXT`); } catch (e) { /* exists */ }
+
       db.saveToFile();
     }
     
