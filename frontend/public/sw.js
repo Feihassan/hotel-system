@@ -1,19 +1,15 @@
-// Cache version is injected via the SW registration URL query param (?v=BUILD_TIME)
-// This ensures a new SW is fetched on every deploy, busting the old cache.
-const CACHE_NAME = 'hotel-mgmt-' + (self.registration.scope + new URL(self.location).searchParams.get('v') || 'v1');
-
+const CACHE_NAME = 'hotel-mgmt-' + (new URL(self.location).searchParams.get('v') || 'v1');
 const SHELL = ['/index.html'];
 
-// ── Install ──────────────────────────────────────────────────────────────────
+// ── Install: cache shell, do NOT skipWaiting automatically ───────────────────
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(SHELL))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL))
   );
+  // Do NOT call self.skipWaiting() here — let the update banner control this
 });
 
-// ── Activate ─────────────────────────────────────────────────────────────────
+// ── Activate: clean old caches, claim clients ────────────────────────────────
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
@@ -31,12 +27,10 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // 1. Skip non-GET and cross-origin requests
-  if (request.method !== 'GET' || url.origin !== self.location.origin) {
-    return;
-  }
+  // Skip non-GET and cross-origin
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
-  // 2. API calls — always network only, never cache
+  // API calls — network only, offline fallback
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request).catch(() =>
@@ -49,7 +43,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Navigation (HTML) — network first, fallback to cached shell
+  // Navigation — network first, fallback to shell
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
@@ -63,7 +57,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 4. Static assets (JS/CSS/fonts/images) — cache first, update in background
+  // Static assets — cache first, update in background
   event.respondWith(
     caches.match(request).then((cached) => {
       const networkFetch = fetch(request).then((res) => {
@@ -72,13 +66,13 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((c) => c.put(request, clone));
         }
         return res;
-      }).catch(() => cached); // fallback to cache if offline
+      }).catch(() => cached);
       return cached || networkFetch;
     })
   );
 });
 
-// ── Messages ──────────────────────────────────────────────────────────────────
+// ── Messages: only skip waiting when user clicks "Update Now" ─────────────────
 self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });

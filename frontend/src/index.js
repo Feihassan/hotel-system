@@ -11,24 +11,28 @@ root.render(
 
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
-    // Pass build time as query param so browser fetches a new SW on every deploy
     const swUrl = `/sw.js?v=${__BUILD_TIME__}`;
 
     navigator.serviceWorker.register(swUrl).then((registration) => {
 
-      // Detect new SW waiting to activate
       const checkForWaiting = (reg) => {
+        // Only show banner if there's a waiting SW AND a controller already exists
+        // (i.e. this is an update, not a first install)
         if (reg.waiting && navigator.serviceWorker.controller) {
           showUpdateBanner(reg);
         }
       };
 
+      // Check immediately in case SW is already waiting
       checkForWaiting(registration);
+
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         if (!newWorker) return;
         newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed') checkForWaiting(registration);
+          if (newWorker.state === 'installed') {
+            checkForWaiting(registration);
+          }
         });
       });
 
@@ -37,17 +41,18 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
     }).catch((err) => console.warn('SW registration failed:', err));
 
-    // Reload once new SW takes control
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!refreshing) { refreshing = true; window.location.reload(); }
-    });
+    // Only reload when controller changes AND we already had a controller
+    // This prevents the first-install reload loop
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
+    }
   });
 }
 
 function showUpdateBanner(registration) {
-  const existing = document.getElementById('sw-update-banner');
-  if (existing) return; // already showing
+  if (document.getElementById('sw-update-banner')) return;
 
   const banner = document.createElement('div');
   banner.id = 'sw-update-banner';
@@ -74,8 +79,15 @@ function showUpdateBanner(registration) {
   document.body.appendChild(banner);
 
   document.getElementById('sw-update-btn').onclick = () => {
-    if (registration.waiting) registration.waiting.postMessage('SKIP_WAITING');
+    if (registration.waiting) {
+      // Listen for controller change before posting message
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      }, { once: true });
+      registration.waiting.postMessage('SKIP_WAITING');
+    }
     banner.remove();
   };
+
   document.getElementById('sw-dismiss-btn').onclick = () => banner.remove();
 }
