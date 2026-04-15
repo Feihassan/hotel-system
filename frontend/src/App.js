@@ -275,9 +275,9 @@ const Header = ({ title, onMenuClick }) => {
       <div className="header-actions">
         {(user?.role === 'receptionist' || user?.role === 'admin') && (
           currentShift ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '12px', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Icons.ShiftOn /> Shift active since {new Date(currentShift.started_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            <div className="shift-controls">
+              <span className="shift-status-text">
+                <Icons.ShiftOn /> Since {new Date(currentShift.started_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
               <button className="btn btn-danger btn-sm" onClick={handleCloseShift} disabled={shiftLoading}>
                 Close Shift
@@ -451,7 +451,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Tables Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+        <div className="two-col-grid">
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Today's Check-Ins</h3>
@@ -644,9 +644,9 @@ const RoomsPage = () => {
                     <tr>
                       <th>Room</th>
                       <th>Type</th>
-                      <th>Floor</th>
+                      <th className="hide-mobile">Floor</th>
                       <th>Status</th>
-                      <th>Price</th>
+                      <th className="hide-mobile">Price</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -655,17 +655,13 @@ const RoomsPage = () => {
                       <tr key={room.id}>
                         <td><strong>{room.room_number}</strong></td>
                         <td>{room.room_type_name}</td>
-                        <td>{room.floor || '-'}</td>
-                        <td>
-                          <span className={`badge ${getStatusBadge(room.status)}`}>
-                            {room.status}
-                          </span>
-                        </td>
-                        <td>KES {parseFloat(room.base_price).toLocaleString()}</td>
+                        <td className="hide-mobile">{room.floor || '-'}</td>
+                        <td><span className={`badge ${getStatusBadge(room.status)}`}>{room.status}</span></td>
+                        <td className="hide-mobile">KES {parseFloat(room.base_price).toLocaleString()}</td>
                         <td>
                           <div className="action-buttons">
                             <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(room)}>Edit</button>
-                            <button className="btn btn-danger btn-sm" onClick={() => handleDelete(room.id)}>Delete</button>
+                            <button className="btn btn-danger btn-sm" onClick={() => handleDelete(room.id)}>Del</button>
                           </div>
                         </td>
                       </tr>
@@ -945,7 +941,7 @@ const CheckInPage = () => {
 
                 <div className="form-group">
                   <label className="form-label">Select Room</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     {rooms.map((room) => (
                       <div
                         key={room.id}
@@ -992,7 +988,7 @@ const CheckInPage = () => {
 
                 <div className="form-group">
                   <label className="form-label">Advance Payment (Optional)</label>
-                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <div className="payment-row" style={{ display: 'flex', gap: '12px' }}>
                     <input
                       type="number"
                       className="form-input"
@@ -1123,8 +1119,8 @@ const ActiveStaysPage = () => {
                     <tr>
                       <th>Room</th>
                       <th>Guest</th>
-                      <th>Check-In</th>
-                      <th>Expected Check-Out</th>
+                      <th className="hide-mobile">Check-In</th>
+                      <th className="hide-mobile">Check-Out</th>
                       <th>Total</th>
                       <th>Actions</th>
                     </tr>
@@ -1137,8 +1133,8 @@ const ActiveStaysPage = () => {
                           <div>{stay.guest_name}</div>
                           <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{stay.phone}</div>
                         </td>
-                        <td>{new Date(stay.check_in_date).toLocaleDateString()}</td>
-                        <td>{new Date(stay.check_out_date).toLocaleDateString()}</td>
+                        <td className="hide-mobile">{new Date(stay.check_in_date).toLocaleDateString()}</td>
+                        <td className="hide-mobile">{new Date(stay.check_out_date).toLocaleDateString()}</td>
                         <td>KES {parseFloat(stay.total_amount).toLocaleString()}</td>
                         <td>
                           <div className="action-buttons">
@@ -1559,7 +1555,7 @@ const ReportsPage = () => {
                 <div className="stat-content"><div className="stat-value">KES {report.payments.total.toLocaleString()}</div><div className="stat-label">Revenue</div></div>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+            <div className="two-col-grid">
               <div className="card">
                 <div className="card-header"><h3 className="card-title">Check-Ins</h3></div>
                 <div className="card-body">
@@ -1989,11 +1985,15 @@ const ProtectedRoute = ({ children, requiredPermission }) => {
 // Layout Component
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const open = () => setSidebarOpen(true);
+  const close = () => setSidebarOpen(false);
   return (
     <div className="app-container">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar isOpen={sidebarOpen} onClose={close} />
       <main className="main-content">
-        {React.cloneElement(children, { onMenuClick: () => setSidebarOpen(true) })}
+        {React.Children.map(children, child =>
+          React.isValidElement(child) ? React.cloneElement(child, { onMenuClick: open }) : child
+        )}
       </main>
     </div>
   );
