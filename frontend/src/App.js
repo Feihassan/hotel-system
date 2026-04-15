@@ -265,8 +265,9 @@ const Sidebar = ({ isOpen, onClose }) => {
 };
 
 // Header Component
-const Header = ({ title, onMenuClick }) => {
+const Header = ({ title }) => {
   const { user } = useAuth();
+  const openSidebar = useContext(SidebarContext);
   const [currentShift, setCurrentShift] = useState(null);
   const [shiftLoading, setShiftLoading] = useState(false);
 
@@ -302,7 +303,7 @@ const Header = ({ title, onMenuClick }) => {
   return (
     <header className="header">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <button className="mobile-menu-btn" onClick={onMenuClick}>
+        <button className="mobile-menu-btn" onClick={openSidebar}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
         <h1 className="header-title">{title}</h1>
@@ -2019,20 +2020,19 @@ const ProtectedRoute = ({ children, requiredPermission }) => {
   return children;
 };
 
+// Sidebar toggle context
+const SidebarContext = React.createContext(() => {});
+
 // Layout Component
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const open = () => setSidebarOpen(true);
-  const close = () => setSidebarOpen(false);
   return (
-    <div className="app-container">
-      <Sidebar isOpen={sidebarOpen} onClose={close} />
-      <main className="main-content">
-        {React.Children.map(children, child =>
-          React.isValidElement(child) ? React.cloneElement(child, { onMenuClick: open }) : child
-        )}
-      </main>
-    </div>
+    <SidebarContext.Provider value={() => setSidebarOpen(true)}>
+      <div className="app-container">
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <main className="main-content">{children}</main>
+      </div>
+    </SidebarContext.Provider>
   );
 };
 
