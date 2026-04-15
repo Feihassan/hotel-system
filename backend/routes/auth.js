@@ -11,29 +11,23 @@ router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    console.log('Login attempt for username:', username);
-    
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
     
     const db = getDb();
     if (!db) {
-      console.error('Database not ready');
       return res.status(500).json({ error: 'Database not ready' });
     }
     
     const stmt = db.prepare('SELECT * FROM users WHERE username = ? AND is_active = 1');
     const user = stmt.getAsObject([username]);
     
-    console.log('User found:', !!user.id);
-    
     if (!user.id) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     
     const isValidPassword = await bcrypt.compare(password, user.password);
-    console.log('Password valid:', isValidPassword);
     
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -169,9 +163,7 @@ router.post('/users', authMiddleware, async (req, res) => {
 // Admin: Get all users
 router.get('/users', authMiddleware, async (req, res) => {
   try {
-    console.log('Getting users...');
     const db = getDb();
-    console.log('DB:', !!db);
     if (!db) {
       return res.status(500).json({ error: 'Database not ready' });
     }
@@ -187,7 +179,6 @@ router.get('/users', authMiddleware, async (req, res) => {
       try { obj.permissions = JSON.parse(obj.permissions || '[]'); } catch(e) { obj.permissions = []; }
       return obj;
     }) : [];
-    console.log('Users fetched:', users.length);
     
     res.json(users);
   } catch (error) {

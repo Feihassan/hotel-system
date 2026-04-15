@@ -127,8 +127,7 @@ const LoginPage = () => {
         </form>
         
         <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)' }}>
-          <p>Demo credentials:</p>
-          <p><strong>Username:</strong> admin | <strong>Password:</strong> admin123</p>
+          <p>Contact your administrator if you need access.</p>
         </div>
       </div>
     </div>

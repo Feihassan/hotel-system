@@ -129,12 +129,7 @@ const seedData = [
   "INSERT OR IGNORE INTO room_types (name, description, base_price, max_occupancy) VALUES ('Deluxe Room', 'Spacious room with premium amenities', 10000, 2)",
   "INSERT OR IGNORE INTO room_types (name, description, base_price, max_occupancy) VALUES ('Suite', 'Luxury suite with separate living area', 15000, 4)",
   "INSERT OR IGNORE INTO room_types (name, description, base_price, max_occupancy) VALUES ('Family Room', 'Large room suitable for families', 12000, 4)",
-  `INSERT OR IGNORE INTO users (username, password, full_name, role) VALUES ('admin', '${bcrypt.hashSync('admin', 10)}', 'System Administrator', 'admin')`,
-  "INSERT OR IGNORE INTO rooms (room_number, room_type_id, floor, description, status) VALUES ('101', 1, 1, 'Room 101 - Standard Single', 'available')",
-  "INSERT OR IGNORE INTO rooms (room_number, room_type_id, floor, description, status) VALUES ('102', 2, 1, 'Room 102 - Standard Double', 'available')",
-  "INSERT OR IGNORE INTO rooms (room_number, room_type_id, floor, description, status) VALUES ('103', 3, 1, 'Room 103 - Deluxe Room', 'available')",
-  "INSERT OR IGNORE INTO rooms (room_number, room_type_id, floor, description, status) VALUES ('201', 4, 2, 'Room 201 - Suite', 'available')",
-  "INSERT OR IGNORE INTO rooms (room_number, room_type_id, floor, description, status) VALUES ('202', 5, 2, 'Room 202 - Family Room', 'available')"
+  `INSERT OR IGNORE INTO users (username, password, full_name, role) VALUES ('admin', '${bcrypt.hashSync('admin123', 12)}', 'System Administrator', 'admin')`,
 ];
 
 async function initDatabase() {

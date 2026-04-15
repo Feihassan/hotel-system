@@ -67,10 +67,8 @@ const startServer = async () => {
     const { getDb } = require('./config/sqlite');
     const db = getDb();
     if (db) {
-      // Add permissions column if missing
       try {
         db.exec(`ALTER TABLE users ADD COLUMN permissions TEXT DEFAULT '[]'`);
-        console.log('Migration: permissions column added');
       } catch (e) { /* already exists */ }
 
       // Create shifts table if missing
@@ -105,7 +103,6 @@ const startServer = async () => {
       } catch (e) { /* ignore */ }
 
       db.saveToFile();
-      console.log('Migrations complete');
     }
     
     app.listen(PORT, () => {
