@@ -1985,7 +1985,7 @@ const UsersPage = () => {
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredPermission }) => {
   const { isAuthenticated, loading, hasPermission, user } = useAuth();
-  
+
   if (loading) {
     return (
       <div className="loading-screen">
@@ -1993,19 +1993,29 @@ const ProtectedRoute = ({ children, requiredPermission }) => {
       </div>
     );
   }
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  
+
   if (requiredPermission && !hasPermission(requiredPermission)) {
-    // Redirect housekeeping users to their default page
-    if (user?.role === 'housekeeping') {
-      return <Navigate to="/housekeeping" replace />;
-    }
+    // Find the first page this user can access and redirect there
+    const fallbacks = [
+      { permission: 'dashboard', path: '/' },
+      { permission: 'rooms', path: '/rooms' },
+      { permission: 'checkin', path: '/checkin' },
+      { permission: 'stays', path: '/stays' },
+      { permission: 'guests', path: '/guests' },
+      { permission: 'housekeeping', path: '/housekeeping' },
+      { permission: 'reports', path: '/reports' },
+    ];
+    const first = fallbacks.find(f => hasPermission(f.permission));
+    if (first) return <Navigate to={first.path} replace />;
+
+    // No accessible page found
     return (
       <div className="app-container">
-        <Sidebar />
+        <Sidebar isOpen={false} onClose={() => {}} />
         <main className="main-content">
           <div className="empty-state" style={{ marginTop: '100px' }}>
             <Icons.X />
@@ -2016,7 +2026,7 @@ const ProtectedRoute = ({ children, requiredPermission }) => {
       </div>
     );
   }
-  
+
   return children;
 };
 
