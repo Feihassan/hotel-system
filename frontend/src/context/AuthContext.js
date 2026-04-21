@@ -33,14 +33,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (username, password) => {
-    console.log('AuthContext login called');
     const response = await authAPI.login({ username, password });
-    console.log('API response:', response.data);
     const { token, user } = response.data;
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
     setUser(user);
-    console.log('User set in context:', user);
     return user;
   };
 
@@ -64,12 +61,14 @@ export const AuthProvider = ({ children }) => {
   const hasPermission = (permission) => {
     if (!user) return false;
     if (user.role === 'admin') return true;
-    // If user has explicit permissions set, use those
-    if (user.permissions && user.permissions.length > 0) {
-      return user.permissions.includes(permission);
-    }
-    // Fall back to role defaults (handles users created without explicit permissions)
-    return (ROLE_DEFAULT_PERMISSIONS[user.role] || []).includes(permission);
+    // Merge explicit permissions with role defaults
+    // so a receptionist always gets at minimum their role's default access
+    const defaults = ROLE_DEFAULT_PERMISSIONS[user.role] || [];
+    const explicit = user.permissions || [];
+    const effective = explicit.length > 0
+      ? [...new Set([...defaults, ...explicit])]
+      : defaults;
+    return effective.includes(permission);
   };
 
   const value = {
