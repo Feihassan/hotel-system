@@ -90,7 +90,7 @@ const LoginPage = () => {
       <div className="login-panel">
         <div className="login-panel-content">
           <div className="login-panel-logo">
-            <img src="/hositality.png" alt="Logo" style={{ width: '44px', height: '44px', objectFit: 'contain' }} />
+            <img src="/hositality.png" alt="Logo" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
           </div>
           <h2 className="login-panel-title">HotelManager</h2>
           <p className="login-panel-subtitle">Front Desk Management System</p>
@@ -186,7 +186,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          <img src="/hositality.png" alt="Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
+          <img src="/hositality.png" alt="Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
           <span>HotelManager</span>
         </div>
       </div>
