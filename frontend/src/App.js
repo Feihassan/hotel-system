@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation, us
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { roomsAPI, bookingsAPI, guestsAPI, paymentsAPI, housekeepingAPI, reportsAPI, authAPI, shiftsAPI } from './api';
 import './App.css';
+import './RoomSelection.css';
 
 // Icons as inline SVGs
 const Icons = {
@@ -981,25 +982,32 @@ const CheckInPage = () => {
 
                 <div className="form-group">
                   <label className="form-label">Select Room</label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div className="room-selection-grid">
                     {rooms.map((room) => (
                       <div
                         key={room.id}
-                        className={`room-card ${room.status}`}
-                        style={{
-                          border: formData.room_id === room.id ? '3px solid var(--primary)' : '2px solid transparent',
-                          padding: '12px',
-                        }}
+                        className={`room-selection-card ${formData.room_id === room.id ? 'selected' : ''}`}
                         onClick={() => setFormData({ ...formData, room_id: room.id })}
                       >
-                        <div style={{ fontSize: '20px', fontWeight: '700' }}>{room.room_number}</div>
-                        <div style={{ fontSize: '10px' }}>{room.room_type_name}</div>
-                        <div style={{ fontSize: '11px', marginTop: '4px' }}>KES {parseFloat(room.base_price).toLocaleString()}/night</div>
+                        <div className="room-selection-header">
+                          <div className="room-selection-number">{room.room_number}</div>
+                          {formData.room_id === room.id && (
+                            <div className="room-selection-check">
+                              <Icons.Check />
+                            </div>
+                          )}
+                        </div>
+                        <div className="room-selection-type">{room.room_type_name}</div>
+                        <div className="room-selection-price">KES {parseFloat(room.base_price).toLocaleString()}<span>/night</span></div>
+                        {room.floor && <div className="room-selection-floor">Floor {room.floor}</div>}
                       </div>
                     ))}
                   </div>
                   {rooms.length === 0 && (
-                    <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>No rooms available</p>
+                    <div className="empty-state" style={{ padding: '40px 20px' }}>
+                      <Icons.Bed />
+                      <p>No rooms available for the selected dates</p>
+                    </div>
                   )}
                 </div>
 
